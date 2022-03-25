@@ -11,6 +11,7 @@
 	<groupId>com.jsons-bikes</groupId>
 	<artifactId>shop</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
 	<name>shop</name>
 	<description>JSON&apos;s Bikes</description>
 	<properties>
