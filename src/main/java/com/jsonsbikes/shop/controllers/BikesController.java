@@ -10,7 +10,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/bikes")
 public class BikesController {
-    @Autowired
+    //@Autowired
     private BikeRepository bikeRepository;
 
     @GetMapping("/")
