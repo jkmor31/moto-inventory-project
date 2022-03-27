@@ -8,37 +8,37 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/bikes")
+@RequestMapping("/api")
 public class BikesController {
-    //@Autowired
+    @Autowired
     private BikeRepository bikeRepository;
 
-    @GetMapping("/")
+    @GetMapping("/bikes")
     List<Bike> list() {
         return bikeRepository.findAll();
     }
 
-    @GetMapping("/{vin}")
+    @GetMapping("/bikes/vin={vin}")
     Bike get(@RequestParam String vin) {
         return bikeRepository.findByVin(vin);
     }
 
-    @GetMapping("/{make}")
+    @GetMapping("/bikes/make={make}")
     List<Bike> listMake(@RequestParam String make) {
         return bikeRepository.findByMake(make);
     }
 
-    @GetMapping("/{type}")
+    @GetMapping("/bikes/type={type}")
     List<Bike> listType(@RequestParam String type) {
         return bikeRepository.findByType(type);
     }
 
-    @PostMapping("/")
+    @PostMapping("/bikes")
     Bike newBike(@RequestBody Bike newBike) {
         return bikeRepository.saveAndFlush(newBike);
     }
 
-    @PutMapping("/{bike_id}")
+    @PutMapping("/bikes/{bike_id}")
     Bike update(@RequestBody Bike updatedBike, @PathVariable Long id) {
         return bikeRepository.findById(id)
                 .map(bike -> {
@@ -54,7 +54,7 @@ public class BikesController {
                 });
     }
 
-    @DeleteMapping("/{bike_id}")
+    @DeleteMapping("/bikes/{bike_id}")
     void delete(@PathVariable Long id) {
         bikeRepository.deleteById(id);
     }
