@@ -18,19 +18,20 @@ public class BikesController {
         return bikeRepository.findAll();
     }
 
-    @GetMapping("/bikes/?vin={vin}")
-    Bike get(@RequestParam String vin) {
-        return bikeRepository.findByVin(vin);
-    }
-
-    @GetMapping("/bikes/?make={make}")
-    List<Bike> listMake(@RequestParam String make) {
-        return bikeRepository.findByMake(make);
-    }
-
-    @GetMapping("/bikes/?type={type}")
-    List<Bike> listType(@RequestParam String type) {
-        return bikeRepository.findByType(type);
+    @GetMapping("/bikes/search")
+    List<Bike> lookup(
+            @RequestParam(required = false) String vin,
+            @RequestParam(required = false) String make,
+            @RequestParam(required = false) String type) {
+        if (vin != null) {
+            return bikeRepository.findByVin(vin);
+        } else if (make != null) {
+            return bikeRepository.findByMake(make);
+        } else if (type != null) {
+            return bikeRepository.findByType(type);
+        } else {
+            throw new BikeNotFoundException();
+        }
     }
 
     @PostMapping("/bikes")
@@ -48,7 +49,7 @@ public class BikesController {
                     bike.setPurchased(updatedBike.getPurchased());
                     bike.setVin(updatedBike.getVin());
                     return bikeRepository.saveAndFlush(bike);
-                }).orElseThrow(() -> new BikeNotFoundException(bike_id));
+                }).orElseThrow(() -> new BikeNotFoundException());
     }
 
     @DeleteMapping("/bikes/{bike_id}")
@@ -64,6 +65,6 @@ public class BikesController {
                     bike.setPurchased(true);
                     return bikeRepository.saveAndFlush(bike);
                 })
-                .orElseThrow(() -> new BikeNotFoundException(bike_id));
+                .orElseThrow(() -> new BikeNotFoundException());
     }
 }

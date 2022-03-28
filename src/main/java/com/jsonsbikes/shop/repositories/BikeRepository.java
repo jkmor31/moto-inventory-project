@@ -2,12 +2,14 @@ package com.jsonsbikes.shop.repositories;
 
 import com.jsonsbikes.shop.models.Bike;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface BikeRepository extends JpaRepository<Bike, Long> {
 
-    Bike findByVin(String vin);
+    List<Bike> findByVin(String vin);
 
     List<Bike> findByMake(String make);
 

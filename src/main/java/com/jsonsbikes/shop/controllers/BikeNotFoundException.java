@@ -1,7 +1,7 @@
 package com.jsonsbikes.shop.controllers;
 
 public class BikeNotFoundException extends RuntimeException{
-    BikeNotFoundException(Long bike_id) {
+    BikeNotFoundException() {
         super("Item was not found in inventory!");
     }
 }
