@@ -48,10 +48,7 @@ public class BikesController {
                     bike.setPurchased(updatedBike.getPurchased());
                     bike.setVin(updatedBike.getVin());
                     return bikeRepository.saveAndFlush(bike);
-                }).orElseGet(() -> {
-                    updatedBike.setBike_id(bike_id);
-                    return bikeRepository.saveAndFlush(updatedBike);
-                });
+                }).orElseThrow(() -> new BikeNotFoundException(bike_id));
     }
 
     @DeleteMapping("/bikes/{bike_id}")
