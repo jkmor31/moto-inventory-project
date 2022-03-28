@@ -1,6 +1,6 @@
 package com.jsonsbikes.shop.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+//import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.persistence.*;
 
 @Entity(name = "bikes")
@@ -9,6 +9,7 @@ public class Bike {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bike_id;
+    // Need to make vin unique
     private String vin;
     private String make;
     private String type;
