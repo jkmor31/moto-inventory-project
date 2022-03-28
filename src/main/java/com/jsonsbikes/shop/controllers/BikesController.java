@@ -18,17 +18,17 @@ public class BikesController {
         return bikeRepository.findAll();
     }
 
-    @GetMapping("/bikes/vin={vin}")
+    @GetMapping("/bikes/?vin={vin}")
     Bike get(@RequestParam String vin) {
         return bikeRepository.findByVin(vin);
     }
 
-    @GetMapping("/bikes/make={make}")
+    @GetMapping("/bikes/?make={make}")
     List<Bike> listMake(@RequestParam String make) {
         return bikeRepository.findByMake(make);
     }
 
-    @GetMapping("/bikes/type={type}")
+    @GetMapping("/bikes/?type={type}")
     List<Bike> listType(@RequestParam String type) {
         return bikeRepository.findByType(type);
     }
@@ -39,8 +39,8 @@ public class BikesController {
     }
 
     @PutMapping("/bikes/{bike_id}")
-    Bike update(@RequestBody Bike updatedBike, @PathVariable Long id) {
-        return bikeRepository.findById(id)
+    Bike update(@RequestBody Bike updatedBike, @PathVariable Long bike_id) {
+        return bikeRepository.findById(bike_id)
                 .map(bike -> {
                     bike.setMake(updatedBike.getMake());
                     bike.setPrice(updatedBike.getPrice());
@@ -49,15 +49,24 @@ public class BikesController {
                     bike.setVin(updatedBike.getVin());
                     return bikeRepository.saveAndFlush(bike);
                 }).orElseGet(() -> {
-                    updatedBike.setBike_id(id);
+                    updatedBike.setBike_id(bike_id);
                     return bikeRepository.saveAndFlush(updatedBike);
                 });
     }
 
     @DeleteMapping("/bikes/{bike_id}")
-    void delete(@PathVariable Long id) {
-        bikeRepository.deleteById(id);
+    void delete(@PathVariable Long bike_id) {
+        bikeRepository.deleteById(bike_id);
     }
 
-
+    @PatchMapping("/bikes/{bike_id}")
+    // Request body isn't really needed for an unsold -> sold toggle
+    Bike purchase(/*@RequestBody Bike purchasedBike, */@PathVariable Long bike_id) {
+        return bikeRepository.findById(bike_id)
+                .map(bike -> {
+                    bike.setPurchased(true);
+                    return bikeRepository.saveAndFlush(bike);
+                })
+                .orElseThrow(() -> new BikeNotFoundException(bike_id));
+    }
 }
