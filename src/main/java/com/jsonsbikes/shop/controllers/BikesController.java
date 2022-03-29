@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -43,21 +45,33 @@ public class BikesController {
 
     @PostMapping("/bikes")
     Bike newBike(@RequestBody Bike newBike) {
-        return bikeRepository.saveAndFlush(newBike);
+        List<Bike> foundBikes = bikeRepository.findByVin(newBike.getVin());
+        if (foundBikes.isEmpty()) {
+            return bikeRepository.saveAndFlush(newBike);
+        } else {
+            throw new BikeAlreadyExistsException();
+        }
     }
 
     @PutMapping("/bikes/{bike_id}")
     Bike update(@RequestBody Bike updatedBike, @PathVariable Long bike_id) {
-        return bikeRepository.findById(bike_id)
-                .map(bike -> {
-                    bike.setMake(updatedBike.getMake());
-                    bike.setPrice(updatedBike.getPrice());
-                    bike.setType(updatedBike.getType());
-                    bike.setPurchased(updatedBike.getPurchased());
-                    bike.setVin(updatedBike.getVin());
-                    return bikeRepository.saveAndFlush(bike);
-                }).orElseThrow(() -> new BikeNotFoundException());
-    }
+        Optional<Bike> foundBike = bikeRepository.findById(bike_id);
+            if ((foundBike.isPresent()) && (foundBike.get().getVin() != updatedBike.getVin())) {
+                List<Bike> foundBikesWithSameVin = bikeRepository.findByVin(updatedBike.getVin());
+                if (foundBikesWithSameVin.isEmpty()) {
+                    foundBike.get().setMake(updatedBike.getMake());
+                    foundBike.get().setPrice(updatedBike.getPrice());
+                    foundBike.get().setType(updatedBike.getType());
+                    foundBike.get().setPurchased(updatedBike.getPurchased());
+                    foundBike.get().setVin(updatedBike.getVin().toUpperCase(Locale.ROOT));
+                    return bikeRepository.saveAndFlush(foundBike.get());
+                } else {
+                    throw new BikeAlreadyExistsException();
+                }
+            } else {
+                throw new BikeNotFoundException();
+            }
+        }
 
     @DeleteMapping("/bikes/{bike_id}")
     void delete(@PathVariable Long bike_id) {
