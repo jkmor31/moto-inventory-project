@@ -18,6 +18,12 @@ public class BikesController {
         return bikeRepository.findAll();
     }
 
+    @GetMapping("/bikes/{bike_id}")
+    Bike one(@PathVariable Long bike_id) {
+        return bikeRepository.findById(bike_id)
+                .orElseThrow(() -> new BikeNotFoundException());
+    }
+
     @GetMapping("/bikes/search")
     List<Bike> lookup(
             @RequestParam(required = false) String vin,
