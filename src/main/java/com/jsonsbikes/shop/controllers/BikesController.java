@@ -56,19 +56,21 @@ public class BikesController {
     @PutMapping("/bikes/{bike_id}")
     Bike update(@RequestBody Bike updatedBike, @PathVariable Long bike_id) {
         Optional<Bike> foundBike = bikeRepository.findById(bike_id);
-            if ((foundBike.isPresent()) && (foundBike.get().getVin() != updatedBike.getVin())) {
+        if (foundBike.isPresent()) {
+            if (!foundBike.get().getVin().equals(updatedBike.getVin())){
                 List<Bike> foundBikesWithSameVin = bikeRepository.findByVin(updatedBike.getVin());
-                if (foundBikesWithSameVin.isEmpty()) {
-                    foundBike.get().setMake(updatedBike.getMake());
-                    foundBike.get().setPrice(updatedBike.getPrice());
-                    foundBike.get().setType(updatedBike.getType());
-                    foundBike.get().setPurchased(updatedBike.getPurchased());
-                    foundBike.get().setVin(updatedBike.getVin().toUpperCase(Locale.ROOT));
-                    return bikeRepository.saveAndFlush(foundBike.get());
-                } else {
+                if (!foundBikesWithSameVin.isEmpty()) {
                     throw new BikeAlreadyExistsException();
+                } else {
+                    foundBike.get().setVin(updatedBike.getVin().toUpperCase(Locale.ROOT));
                 }
-            } else {
+            }
+            foundBike.get().setMake(updatedBike.getMake());
+            foundBike.get().setPrice(updatedBike.getPrice());
+            foundBike.get().setType(updatedBike.getType());
+            foundBike.get().setPurchased(updatedBike.getPurchased());
+            return bikeRepository.saveAndFlush(foundBike.get());
+        } else {
                 throw new BikeNotFoundException();
             }
         }
