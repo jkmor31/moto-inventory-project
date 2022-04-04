@@ -7,7 +7,8 @@ import javax.persistence.*;
 //@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Bike {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name = "seqAfterBatch", initialValue = 251)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seqAfterBatch")
     private Long bike_id;
     // Need to make vin unique
     private String vin;
